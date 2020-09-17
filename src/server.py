@@ -26,6 +26,8 @@ def create_app():
         total_cities_count = request_info['total_cities_count']
         process_percent = float(processed_cities_count) / float(total_cities_count) * 100.0
 
+        # it will always return the request progress, even when completed
+        # as stated in the application requirements
         return jsonify({'process_percent': process_percent}), 200
 
     @app.route('/requests', methods=['POST'])
