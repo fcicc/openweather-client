@@ -1,0 +1,27 @@
+version: "3.8"
+services: 
+    app:
+        image: python:3.8
+        command: sh -c "pip install -r requirements.txt && pip install -r requirements_dev.txt && mkdir -p worker_spool && chown -R www-data worker_spool && uwsgi --ini uwsgi.ini --py-autoreload 1"
+        ports: 
+            - 5000:8080
+        working_dir: /app
+        volumes: 
+            - ./:/app
+        environment: 
+            FLASK_APP: ./src/server.py
+            FLASK_ENV: development
+            MONGO_HOST: mongodb
+            MONGO_DATABASE: openweather
+            CITIES_PER_REQUEST: 20
+        secrets:
+            - openweather_appid
+    mongodb: 
+        image: mongo:4.4.1
+        volumes: 
+            - mongodata:/data/db
+volumes: 
+    mongodata: 
+secrets: 
+    openweather_appid: 
+        file: ./secrets/.openweather_appid

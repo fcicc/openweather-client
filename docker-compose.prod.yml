@@ -1,0 +1,33 @@
+version: "3.8"
+services: 
+    app:
+        image: openweather-client
+        ports: 
+            - 5001:8080
+        environment: 
+            FLASK_APP: ./src/server.py
+            FLASK_ENV: production
+            MONGO_HOST: mongodb
+            MONGO_DATABASE: openweather
+            MONGO_USERNAME: root
+            MONGO_PASSWORD_SECRET_KEY: mongo_root_pwd
+            CITIES_PER_REQUEST: 20
+        secrets:
+            - mongo_root_pwd
+            - openweather_appid
+    mongodb: 
+        image: mongo:4.4.1
+        volumes: 
+            - mongodata_prod:/data/db
+        environment: 
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_root_pwd
+        secrets:
+            - mongo_root_pwd
+volumes: 
+    mongodata_prod: 
+secrets: 
+    mongo_root_pwd: 
+        file: ./secrets/.mongo_root_pwd
+    openweather_appid: 
+        file: ./secrets/.openweather_appid
