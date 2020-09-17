@@ -39,10 +39,12 @@ The application runs two processes:
 
 I chose Flask because it is a simple microframework. It is a very popular choice for microservices like this applcation. It is easy to configure and has good integration with MongoDB using a third-party library.
 
-To run the two processes, I used the uWSGI host, which runs the Flask app and provides a spooler capable of executing background tasks. This implementation uses a local folder that stores the enqueued messages, so it is not necessary to configure a message broker. If it was needed to scale the API and the worker separately, I would choose a more robust solution like Celery and ship it in a separate container (and ship a separate message broker as well). Nevertheless, for this application, the uWSGI spooler fits our needs.
+To run the two processes, I used the uWSGI host, which runs the Flask app and provides a spooler capable of executing background tasks. This implementation uses a local folder that stores the enqueued messages, so it is not necessary to configure a message broker. If it was needed to scale the API and the worker separately, I would choose a more robust solution like Celery and ship it in a separate container (and ship a separate message broker as well). For this simple application, I did not want to create such a structure.
 
-I configured the spooler to run in at least every 20 seconds. Since OpenWeather API accepts 20 cities per request and 60 cities per minute, this configuration avoids exceeding these limitations. Obviously, I do not run tasks in parallel.
+I configured the spooler to run at every 5 seconds. If there's more than one task (parallel requests), the spooler executes all tasks in the same loop. However, if it exceeds the limit of 60 cities within a minute, requests are paused.
 
-Each task run pulls 20 pending cities from OpenWeather, stores them in the request document in MongoDB, and pops the cities from the pending city IDs list in the document. If there are pending cities remaining, it enqueues a new task recursively. This approach allows me to control the request frequency by the spooler configuration, without having to code. It is also easy to unit-test: I just mock the spooler queue calls (either in API and recursive) to run the tasks synchronously.
+Each task run pulls up to 20 pending cities from OpenWeather (also a limitation from their API), stores them in the request document in MongoDB, and pops the cities from the pending city IDs list in the document. If there are pending cities remaining, it enqueues a new task recursively. If some task fails (e.g., cities per minute limit is exceeded), it automatically retries in the next spooler loop.
+
+## Remarks
 
 If I deployed this application for large scale use, I would consider at least two more choices: using a web server like Nginx and using container orchestration like Kubernetes or Swarm.

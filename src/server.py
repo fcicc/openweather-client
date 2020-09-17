@@ -47,8 +47,7 @@ def create_app():
 
         repository.insert_request(request_id, datetime.datetime.utcnow(), city_ids)
 
-        cities_per_request = os.environ.get('CITIES_PER_REQUEST')
-        task_args = prepare_spooler_args(request_id=request_id, cities_per_request=cities_per_request)
+        task_args = prepare_spooler_args(request_id=request_id)
         execute_request(task_args)
 
         msg = {

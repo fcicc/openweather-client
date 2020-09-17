@@ -13,7 +13,6 @@ services:
             FLASK_ENV: development
             MONGO_HOST: mongodb
             MONGO_DATABASE: openweather
-            CITIES_PER_REQUEST: 20
         secrets:
             - openweather_appid
     mongodb: 
