@@ -6,7 +6,7 @@
 
 The application was developed using Docker Engine version 19.03.12 and Docker Compose version 1.26.2.
 
-Before executing the application, it is necessary to create a file in the path ``./secrets/.openweather_appid`` (relative to the project root path). This file must be a plain text (UTF-8) containing a valid OpenWeather API ``appid`` and must not contain like breaks.
+Before executing the application, it is necessary to create a file in the path ``./secrets/.openweather_appid`` (relative to the project root path). This file must be a plain text (UTF-8) containing a valid OpenWeather API ID and must not contain like breaks.
 
 To execute the application in development mode, navigate to the project's root folder and type the following command:
 
@@ -46,7 +46,7 @@ Starts a new request if it does not exist. It receives the body:
 }
 ```
 
-If it starts the request, the HTTP return code is ``200 OK``. If it is not possible to start the request (e.g., the request already exists), it returns ``400 BAD REQUEST``.
+If it starts the request, the HTTP return code is ``202 ACCEPTED``. If it is not possible to start the request (e.g., the request already exists), it returns ``400 BAD REQUEST``.
 
 ## Testing
 
@@ -89,7 +89,7 @@ Then, type:
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-It runs on ``http://locahost:5001``. It does not contain the development dependencies and test code, so it is not to run the automated tests in production mode.
+It runs on ``http://locahost:5001``. It does not contain the development dependencies and test code, so it is not possible to run the unit tests in production mode.
 
 ## Project structure
 
